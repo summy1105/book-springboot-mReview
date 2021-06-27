@@ -1,0 +1,21 @@
+.uploadResult {
+  width: 100%;
+  background-color: gray;
+  margin-top: 10px;
+}
+.uploadResult ul {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+  vertical-align: top;
+  overflow: auto;
+}
+.uploadResult ul li {
+  list-style: none;
+  padding: 10px;
+  margin-left: 2em;
+}
+.uploadResult ul li img {
+  width: 100px;
+}

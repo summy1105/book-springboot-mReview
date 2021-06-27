@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <input type="file" name="uploadFiles" multiple />
+    <button class="uploadBtn">Upload</button>
+    <div class="uploadResult"></div>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.js"
+      integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      function showUploadedImages(arr) {
+        console.log(arr);
+
+        var divArea = $('.uploadResult');
+
+        var str = '';
+
+        for (var i = 0; i < arr.length; i++) {
+          str += '<div>';
+          str += "<img src='/display?fileName=" + arr[i].thumbnailURL + "'>";
+          str +=
+            "<button class='removeBtn' data-name='" +
+            arr[i].imageURL +
+            "'>REMOVE</button>";
+          str += '</div>';
+        }
+        divArea.append(str);
+      } // end showUploadedImages function
+
+      $('.uploadBtn').click(function () {
+        var formData = new FormData();
+
+        var inputFile = $("input[type='file']");
+
+        var files = inputFile[0].files;
+
+        for (var i = 0; i < files.length; i++) {
+          console.log(files[i]);
+          formData.append('uploadFiles', files[i]);
+        }
+
+        $.ajax({
+          url: '/uploadAjax',
+          processData: false,
+          contentType: false,
+          data: formData,
+          type: 'POST',
+          dataType: 'json',
+          success: function (result) {
+            showUploadedImages(result);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+          },
+        }); // end $.ajax
+      }); // end .uploadBtn click
+
+      $('.uploadResult').on('click', '.removeBtn', function (e) {
+        var target = $(this);
+        var fileName = target.data('name');
+        var targetDiv = $(this).closest('div');
+
+        console.log(fileName);
+
+        $.post('/removeFile', { fileName: fileName }, function (result) {
+          console.log(result);
+          if (result === true) {
+            targetDiv.remove();
+          }
+        });
+      }); // end .uploadResult .removeBtn click
+    </script>
+  </body>
+</html>
